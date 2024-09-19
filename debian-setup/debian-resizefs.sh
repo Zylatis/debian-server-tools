@@ -10,10 +10,13 @@
 # BASH-VERSION  :4.2+
 # ALTERNATIVE   :http://www.ivarch.com/blogs/oss/2007/01/resize-a-live-root-fs-a-howto.shtml
 
+# Exit on error. For example, it's possible we don't have enough space in our /boot (or equiv)
+# partition to generate new initrds and we want to exit the script rather than fail and reboot
+set -e
+
 # Check current filesystem type
 ROOT_FS_TYPE="$(sed -n -e 's|^/dev/\S\+ / \(ext4\) .*$|\1|p' /proc/mounts)"
 test "$ROOT_FS_TYPE" == ext4 || exit 100
-
 # Copy e2fsck and resize2fs to initrd
 cat > /etc/initramfs-tools/hooks/resize2fs <<"EOF"
 #!/bin/sh
